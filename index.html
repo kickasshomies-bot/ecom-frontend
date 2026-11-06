@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopSpace</title>
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --dark: #1e293b;
+      --muted: #64748b;
+      --background: #f1f5f9;
+      --white: #fff;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--dark);
+      background: var(--background);
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button { cursor: pointer; }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    nav button, .secondary {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--dark);
+      padding: 9px 12px;
+      border-radius: 8px;
+    }
+
+    nav button:hover, .secondary:hover {
+      background: #f8fafc;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 24px 20px 50px;
+    }
+
+    .hero {
+      padding: 35px;
+      border-radius: 16px;
+      color: white;
+      background: linear-gradient(120deg, #4f46e5, #9333ea);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 { margin: 0 0 10px; }
+    .hero p { margin: 0; opacity: 0.9; }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    input, select, textarea {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px;
+      background: white;
+      color: var(--dark);
+    }
+
+    .filters input { flex: 1; min-width: 200px; }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .product {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .product-image {
+      height: 150px;
+      display: grid;
+      place-items: center;
+      background: #eef2ff;
+      font-size: 4rem;
+    }
+
+    .product-body { padding: 16px; }
+    .product h3 { margin: 0 0 6px; }
+    .category { color: var(--muted); font-size: 0.9rem; }
+    .price { font-weight: bold; font-size: 1.1rem; margin: 14px 0; }
+
+    .product-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .primary {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      background: var(--primary);
+      color: white;
+    }
+
+    .primary:hover { background: #4338ca; }
+    .product-actions .primary { flex: 1; }
+
+    dialog {
+      border: 0;
+      border-radius: 14px;
+      padding: 0;
+      width: min(95%, 550px);
+      max-height: 85vh;
+      box-shadow: 0 20px 60px #0003;
+    }
+
+    dialog::backdrop { background: #0f172a99; }
+
+    .dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dialog-header h2 { margin: 0; }
+    .dialog-content { padding: 20px; }
+
+    .close {
+      border: 0;
+      background: none;
+      font-size: 1.5rem;
+      color: var(--muted);
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .item-info { flex: 1; }
+    .item-info small { display: block; color: var(--muted); margin-top: 4px; }
+
+    .quantity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quantity button {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: white;
+    }
+
+    .remove {
+      border: 0;
+      background: none;
+      color: #dc2626;
+      padding: 5px;
+    }
+
+    .total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .full { width: 100%; }
+
+    form label {
+      display: block;
+      font-weight: bold;
+      margin: 14px 0 6px;
+    }
+
+    form input, form textarea {
+      width: 100%;
+    }
+
+    form button { margin-top: 18px; }
+    .empty { color: var(--muted); }
+    .notice { color: #15803d; margin-top: 12px; }
+
+    @media (max-width: 500px) {
+      .hero { padding: 24px; }
+      nav button { padding: 8px; }
+      .products { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .product-body { padding: 12px; }
+      .product-image { height: 120px; }
+      .item { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">ShopSpace</div>
+      <nav aria-label="Main navigation">
+        <button id="homeBtn">Products</button>
+        <button id="wishlistBtn">♡ Wishlist (<span id="wishlistCount">0</span>)</button>
+        <button id="cartBtn">🛒 Cart (<span id="cartCount">0</span>)</button>
+        <button id="profileBtn">👤 Profile</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Find your next favorite thing</h1>
+      <p>Discover great products for everyday life.</p>
+    </section>
+
+    <section aria-label="Product filters">
+      <div class="filters">
+        <input id="search" type="search" placeholder="Search products..." aria-label="Search products">
+        <select id="category" aria-label="Filter by category">
+          <option value="all">All categories</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Fashion">Fashion</option>
+          <option value="Home">Home</option>
+        </select>
+        <select id="sort" aria-label="Sort products">
+          <option value="default">Default sorting</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+        </select>
+      </div>
+    </section>
+
+    <section>
+      <h2>Our Products</h2>
+      <div id="productGrid" class="products"></div>
+      <p id="noResults" class="empty" hidden>No products found.</p>
+    </section>
+  </main>
+
+  <!-- Cart -->
+  <dialog id="cartDialog">
+    <div class="dialog-header">
+      <h2>Your Cart</h2>
+      <button class="close" data-close="cartDialog" aria-label="Close">&times;</button>
+    </div>
+    <div class="dialog-content">
+      <div id="cartItems"></div>
+      <div class="total"><span>Total</span><span id="cartTotal">$0.00</span></div>
+      <button id="checkoutBtn" class="primary full">Proceed to checkout</button>
+    </div>
+  </dialog>
+
+  <!-- Wishlist -->
+  <dialog id="wishlistDialog">
+    <div class="dialog-header">
+      <h2>Your Wishlist</h2>
+      <button class="close" data-close="wishlistDialog" aria-label="Close">&times;</button>
+    </div>
+    <div class="dialog-content" id="wishlistItems"></div>
+  </dialog>
+
+  <!-- Profile -->
+  <dialog id="profileDialog">
+    <div class="dialog-header">
+      <h2>Your Profile</h2>
+      <button class="close" data-close="profileDialog" aria-label="Close">&times;</button>
+    </div>
+    <div class="dialog-content">
+      <form id="profileForm">
+        <label for="profileName">Name</label>
+        <input id="profileName" required placeholder="Your name">
+
+        <label for="profileEmail">Email</label>
+        <input id="profileEmail" type="email" required placeholder="you@example.com">
+
+        <button class="primary full" type="submit">Save profile</button>
+        <p id="profileMessage" class="notice" aria-live="polite"></p>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Checkout -->
+  <dialog id="checkoutDialog">
+    <div class="dialog-header">
+      <h2>Checkout</h2>
+      <button class="close" data-close="checkoutDialog" aria-label="Close">&times;</button>
+    </div>
+    <div class="dialog-content">
+      <p>Order total: <strong id="checkoutTotal"></strong></p>
+      <form id="checkoutForm">
+        <label for="checkoutName">Full name</label>
+        <input id="checkoutName" required>
+
+        <label for="checkoutEmail">Email</label>
+        <input id="checkoutEmail" type="email" required>
+
+        <label for="address">Shipping address</label>
+        <textarea id="address" rows="3" required></textarea>
+
+        <button class="primary full" type="submit">Place demo order</button>
+      </form>
+      <p><small>No real payment will be collected.</small></p>
+    </div>
+  </dialog>
+
+  <script>
+    const products = [
+      { id: 1, name: "Wireless Headphones", category: "Electronics", price: 59.99, icon: "🎧" },
+      { id: 2, name: "Smart Watch", category: "Electronics", price: 89.99, icon: "⌚" },
+      { id: 3, name: "Bluetooth Speaker", category: "Electronics", price: 39.99, icon: "🔊" },
+      { id: 4, name: "Classic Sneakers", category: "Fashion", price: 64.99, icon: "👟" },
+      { id: 5, name: "Everyday Backpack", category: "Fashion", price: 34.99, icon: "🎒" },
+      { id: 6, name: "Sunglasses", category: "Fashion", price: 19.99, icon: "🕶️" },
+      { id: 7, name: "Desk Lamp", category: "Home", price: 29.99, icon: "💡" },
+      { id: 8, name: "Coffee Mug", category: "Home", price: 12.99, icon: "☕" }
+    ];
+
+    function load(key, fallback) {
+      try {
+        const value = localStorage.getItem(key);
+        return value ? JSON.parse(value) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    let cart = load("shop_cart", {});
+    let wishlist = load("shop_wishlist", []);
+    let profile = load("shop_profile", { name: "", email: "" });
+
+    const $ = id => document.getElementById(id);
+    const money = amount => `$${amount.toFixed(2)}`;
+
+    function save() {
+      localStorage.setItem("shop_cart", JSON.stringify(cart));
+      localStorage.setItem("shop_wishlist", JSON.stringify(wishlist));
+      localStorage.setItem("shop_profile", JSON.stringify(profile));
+    }
+
+    function updateCounts() {
+      $("cartCount").textContent = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+      $("wishlistCount").textContent = wishlist.length;
+    }
+
+    function renderProducts() {
+      const query = $("search").value.trim().toLowerCase();
+      const category = $("category").value;
+      const sort = $("sort").value;
+
+      let filtered = products.filter(product =>
+        product.name.toLowerCase().includes(query) &&
+        (category === "all" || product.category === category)
+      );
+
+      if (sort === "low") filtered.sort((a, b) => a.price - b.price);
+      if (sort === "high") filtered.sort((a, b) => b.price - a.price);
+
+      $("productGrid").innerHTML = filtered.map(product => `
+        <article class="product">
+          <div class="product-image" aria-hidden="true">${product.icon}</div>
+          <div class="product-body">
+            <h3>${product.name}</h3>
+            <div class="category">${product.category}</div>
+            <div class="price">${money(product.price)}</div>
+            <div class="product-actions">
+              <button class="primary" data-add="${product.id}">Add to cart</button>
+              <button class="secondary" data-wish="${product.id}"
+                aria-label="${wishlist.includes(product.id) ? "Remove from" : "Add to"} wishlist">
+                ${wishlist.includes(product.id) ? "♥" : "♡"}
+              </button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      $("noResults").hidden = filtered.length > 0;
+    }
+
+    function addToCart(id) {
+      cart[id] = (cart[id] || 0) + 1;
+      save();
+      updateCounts();
+    }
+
+    function toggleWishlist(id) {
+      wishlist = wishlist.includes(id)
+        ? wishlist.filter(item => item !== id)
+        : [...wishlist, id];
+      save();
+      updateCounts();
+      renderProducts();
+      renderWishlist();
+    }
+
+    function cartTotal() {
+      return products.reduce((sum, product) =>
+        sum + product.price * (cart[product.id] || 0), 0);
+    }
+
+    function renderCart() {
+      const items = products.filter(product => cart[product.id]);
+
+      $("cartItems").innerHTML = items.length ? items.map(product => `
+        <div class="item">
+          <div class="item-info">
+            <strong>${product.icon} ${product.name}</strong>
+            <small>${money(product.price)} each</small>
+          </div>
+          <div class="quantity">
+            <button data-decrease="${product.id}" aria-label="Decrease ${product.name} quantity">−</button>
+            <span>${cart[product.id]}</span>
+            <button data-increase="${product.id}" aria-label="Increase ${product.name} quantity">+</button>
+          </div>
+          <button class="remove" data-remove="${product.id}">Remove</button>
+        </div>
+      `).join("") : '<p class="empty">Your cart is empty.</p>';
+
+      $("cartTotal").textContent = money(cartTotal());
+      $("checkoutBtn").disabled = items.length === 0;
+    }
+
+    function renderWishlist() {
+      const items = products.filter(product => wishlist.includes(product.id));
+
+      $("wishlistItems").innerHTML = items.length ? items.map(product => `
+        <div class="item">
+          <div class="item-info">
+            <strong>${product.icon} ${product.name}</strong>
+            <small>${money(product.price)}</small>
+          </div>
+          <button class="primary" data-add="${product.id}">Add to cart</button>
+          <button class="remove" data-wish="${product.id}">Remove</button>
+        </div>
+      `).join("") : '<p class="empty">Your wishlist is empty.</p>';
+    }
+
+    document.addEventListener("click", event => {
+      const button = event.target.closest("button");
+      if (!button) return;
+
+      if (button.dataset.close) $(button.dataset.close).close();
+      if (button.dataset.add) addToCart(Number(button.dataset.add));
+      if (button.dataset.wish) toggleWishlist(Number(button.dataset.wish));
+
+      if (button.dataset.increase) {
+        addToCart(Number(button.dataset.increase));
+        renderCart();
+      }
+
+      if (button.dataset.decrease) {
+        const id = Number(button.dataset.decrease);
+        cart[id]--;
+        if (cart[id] <= 0) delete cart[id];
+        save();
+        updateCounts();
+        renderCart();
+      }
+
+      if (button.dataset.remove) {
+        delete cart[Number(button.dataset.remove)];
+        save();
+        updateCounts();
+        renderCart();
+      }
+    });
+
+    $("search").addEventListener("input", renderProducts);
+    $("category").addEventListener("change", renderProducts);
+    $("sort").addEventListener("change", renderProducts);
+
+    $("homeBtn").addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    $("cartBtn").addEventListener("click", () => {
+      renderCart();
+      $("cartDialog").showModal();
+    });
+
+    $("wishlistBtn").addEventListener("click", () => {
+      renderWishlist();
+      $("wishlistDialog").showModal();
+    });
+
+    $("profileBtn").addEventListener("click", () => {
+      $("profileName").value = profile.name;
+      $("profileEmail").value = profile.email;
+      $("profileMessage").textContent = "";
+      $("profileDialog").showModal();
+    });
+
+    $("profileForm").addEventListener("submit", event => {
+      event.preventDefault();
+      profile = {
+        name: $("profileName").value.trim(),
+        email: $("profileEmail").value.trim()
+      };
+      save();
+      $("profileMessage").textContent = "Profile saved!";
+    });
+
+    $("checkoutBtn").addEventListener("click", () => {
+      $("checkoutTotal").textContent = money(cartTotal());
+      $("checkoutName").value = profile.name;
+      $("checkoutEmail").value = profile.email;
+      $("cartDialog").close();
+      $("checkoutDialog").showModal();
+    });
+
+    $("checkoutForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      if (!Object.keys(cart).length) return;
+
+      cart = {};
+      save();
+      updateCounts();
+      $("checkoutDialog").close();
+      $("checkoutForm").reset();
+      alert("Your demo order has been placed. Thank you!");
+    });
+
+    updateCounts();
+    renderProducts();
+  </script>
+</body>
+</html>
